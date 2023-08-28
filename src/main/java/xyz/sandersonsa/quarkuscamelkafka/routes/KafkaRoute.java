@@ -22,9 +22,9 @@ public class KafkaRoute extends RouteBuilder {
                 .log("Message correctly sent to the topic! : \"${body}\" ");
 
         // kafka consumer
-        from("kafka:{{kafka.topic.name}}")
-                .routeId("FromKafka2Seda")
-                .log("Received : \"${body}\"")
-                .to("seda:kafka-messages");
+        // from("kafka:{{kafka.topic.name}}")
+        //         .routeId("FromKafka2Seda")
+        //         .log("Received : \"${body}\"")
+        //         .to("seda:kafka-messages");
     }
 }
