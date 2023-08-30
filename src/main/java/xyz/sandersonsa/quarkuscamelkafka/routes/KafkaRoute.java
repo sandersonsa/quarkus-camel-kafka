@@ -20,6 +20,7 @@ public class KafkaRoute extends RouteBuilder {
                 .routeId("FromTimer2Kafka")
                 .setBody().simple("Message #${exchangeProperty.CamelTimerCounter}")
                 .setHeader(KafkaConstants.HEADERS, constant("MSG HEADER"))
+                .setHeader("source", constant("Outside cluste Openshift"))
                 .setHeader(KafkaConstants.KEY, constant("MSG KEY"))
                 .to("kafka:{{kafka.topic.name}}")
                 .log("Message correctly sent to the topic! : \"${body}\" ");
