@@ -31,6 +31,7 @@ public class KafkaRoute extends RouteBuilder {
                         msg.getIn().setBody(file);
                     }
                 })
+                .convertBodyTo(File.class)
                 // .setBody().simple("resource:classpath:src/files/sample.txt")
                 .setHeader(KafkaConstants.HEADERS, constant("MSG HEADER"))
                 .setHeader("source", constant("Outside cluste Openshift"))
