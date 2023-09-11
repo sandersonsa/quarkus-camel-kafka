@@ -12,6 +12,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
@@ -64,6 +65,7 @@ public class KafkaRoute extends RouteBuilder {
                 .setHeader(KafkaConstants.HEADERS, constant("MSG HEADER"))
                 .setHeader("source", constant("Outside cluste Openshift"))
                 .setHeader(KafkaConstants.KEY, constant("MSG KEY"))
+                .setProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, constant("20971520"))
                 .to("kafka:{{kafka.topic.name}}")
                 .log("Message correctly sent to the topic! : \"${body}\" ");
 
