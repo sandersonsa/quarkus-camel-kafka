@@ -1,6 +1,10 @@
 package xyz.sandersonsa.quarkuscamelkafka.routes;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -25,13 +29,37 @@ public class KafkaRoute extends RouteBuilder {
                 // .setBody(constant("resource:classpath:files/sample.txt"))
                 // .from("file:src/files/sample.txt?noop=true")
                 .process(new Processor() {
+
+                    private String readFromInputStream(InputStream inputStream)
+                        throws IOException {
+                            StringBuilder resultStringBuilder = new StringBuilder();
+                            try (BufferedReader br
+                            = new BufferedReader(new InputStreamReader(inputStream))) {
+                                String line;
+                                while ((line = br.readLine()) != null) {
+                                    resultStringBuilder.append(line).append("\n");
+                                }
+                            }
+                        return resultStringBuilder.toString();
+                        }
                     public void process(Exchange msg) {
-                        File file = new File("src/files/sample.txt");
-                        LOG.info("File name: " + file.getName());
-                        msg.getIn().setBody(file);
+
+                        Class clazz = KafkaRoute.class;
+                        InputStream inputStream = clazz.getResourceAsStream("src/files/sample.txt");
+                        try {
+                            String data = readFromInputStream(inputStream);
+                            msg.getIn().setBody(data);
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        
+                        // File file = new File("src/files/sample.txt");
+                        // LOG.info("File name: " + file.getName());
+                        // msg.getIn().setBody(file);
                     }
                 })
-                .convertBodyTo(File.class)
+                // .convertBodyTo(File.class)
                 // .setBody().simple("resource:classpath:src/files/sample.txt")
                 .setHeader(KafkaConstants.HEADERS, constant("MSG HEADER"))
                 .setHeader("source", constant("Outside cluste Openshift"))
